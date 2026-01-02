@@ -14,9 +14,9 @@
     --font-heading: 'Orbitron', sans-serif;
     --font-body: 'Inter', sans-serif;
     --matrix-color: rgba(0, 150, 255, 0.4);
-    /* Logo shadow (monochrome: white + black depth) */
-    --logo-shadow: 0 0 8px rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.45);
-    --logo-hover-shadow: 0 0 12px rgba(255,255,255,0.08), 0 12px 36px rgba(0,0,0,0.35);
+    /* Logo shadow (dark theme: visible white halo + depth) */
+    --logo-shadow: 0 0 14px rgba(255,255,255,0.18), 0 8px 24px rgba(0,0,0,0.45);
+    --logo-hover-shadow: 0 0 22px rgba(255,255,255,0.22), 0 12px 36px rgba(0,0,0,0.35);
 } 
 
 [data-theme="light"] {
