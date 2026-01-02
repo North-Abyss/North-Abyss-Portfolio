@@ -38,7 +38,7 @@ Simply open `index.html` in any modern web browser to view the site locally.
 
 ```bash
 # Clone the repo
-git clone [https://github.com/North-Abyss/Portfolio.git](https://github.com/North-Abyss/Portfolio.git)
+git clone https://github.com/North-Abyss/Portfolio.git
 
 # Navigate to directory
 cd Portfolio
