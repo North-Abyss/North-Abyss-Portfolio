@@ -3,7 +3,7 @@
 
 A futuristic, highly interactive personal portfolio website featuring a "Deep Space" aesthetic with dynamic visual effects.
 
-Portfolio : [[https://north-abyss.github.io/Portfolio/]](https://north-abyss.github.io/Portfolio/)
+Portfolio : [[https://north-abyss.github.io/Portfolio]](https://north-abyss.github.io/Portfolio)
 
 ## ✨ Key Features
 
