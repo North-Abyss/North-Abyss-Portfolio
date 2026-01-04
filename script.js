@@ -9,31 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Theme Toggle Logic
     const themeCheckbox = document.getElementById('theme-checkbox');
 
-    // Check for saved theme preference
+    // Apply saved user theme after system default (system already applied in head script)
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
-        themeCheckbox.checked = savedTheme === 'light'; // Light is checked (Sun/Day mode for this toggle logic?)
-        // Wait, looking at CSS:
-        // .slider:checked + .switch { background-color: #112350; } -> Dark Blue.
-        // And it shows moons/stars.
-        // So CHECKED = DARK MODE (Night).
-        // UNCHECKED = LIGHT MODE (Day).
-
-        // My site defaults to Dark Mode in :root.
-        // So if savedTheme is 'dark', it should be CHECKED.
-        // If savedTheme is 'light', it should be UNCHECKED.
-
-        themeCheckbox.checked = savedTheme === 'dark';
-        updateThemeIcon(savedTheme);
-    } else {
-        // Default is Dark Mode (:root), so check it by default
-        themeCheckbox.checked = true;
     }
+
+    // Ensure checkbox reflects the active theme (checked = dark)
+    const currentTheme = document.documentElement.getAttribute('data-theme') || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+    themeCheckbox.checked = currentTheme === 'dark';
+    updateThemeIcon(currentTheme);
 
     themeCheckbox.addEventListener('change', () => {
         const newTheme = themeCheckbox.checked ? 'dark' : 'light';
-
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(newTheme);
@@ -100,6 +88,55 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
+    // Matrix generation (deterministic: one pattern duplicated, constant cell size)
+    (function() {
+        const container = () => document.getElementById('jp-matrix') || document.querySelector('.jp-matrix');
+        const PATTERN = ["ア","イ","ウ","エ","オ","カ","キ","ク","ケ","コ","サ","シ","ス","セ","ソ","タ","チ","ツ","テ","ト","ナ","ニ","ヌ","ネ","ノ","ハ","ヒ","フ","ヘ","ホ","マ","ミ","ム","メ","モ","ヤ","ユ","ヨ","ラ","リ","ル","レ","ロ","ワ","ヲ","ン","ガ","ギ","グ","ゲ","ゴ","ザ","ジ","ズ","ゼ","ゾ","ダ","ヂ","ヅ","デ","ド","バ","ビ","ブ","ベ","ボ","パ","ピ","プ","ペ","ポ"];
+
+        function generateMatrix() {
+            const ct = container();
+            if (!ct) return;
+            const cs = getComputedStyle(ct).getPropertyValue('--cell-size') || '';
+            const cellSize = parseInt(cs, 10) || 44; // fixed cell fallback (44px per request)
+            const rect = ct.getBoundingClientRect();
+            const width = Math.max(0, Math.floor(rect.width));
+            const height = Math.max(0, Math.floor(rect.height));
+            const style = getComputedStyle(ct);
+            const paddingY = parseFloat(style.paddingTop || 0) + parseFloat(style.paddingBottom || 0);
+            const paddingX = parseFloat(style.paddingLeft || 0) + parseFloat(style.paddingRight || 0);
+            const usableWidth = Math.max(0, width - paddingX);
+            const usableHeight = Math.max(0, height - paddingY);
+            const cols = Math.max(1, Math.floor(usableWidth / cellSize));
+            const rows = Math.max(1, Math.floor(usableHeight / cellSize));
+
+            // Fill matrix continuously across rows (do not restart pattern each row)
+            const total = rows * cols;
+            let html = '';
+            for (let i = 0; i < total; i++) {
+                const ch = PATTERN[i % PATTERN.length];
+                html += `<span>${ch}</span>`;
+            }
+
+            ct.innerHTML = html;
+        }
+
+        let resizeTimer;
+        function debouncedGenerate() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(generateMatrix, 120);
+        }
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(generateMatrix).catch(generateMatrix);
+        } else {
+            generateMatrix();
+        }
+
+        window.addEventListener('resize', debouncedGenerate);
+        window.addEventListener('orientationchange', debouncedGenerate);
+
+    })();
+
     // Add this style dynamically or in css, ensuring opacity starts at 0
     const style = document.createElement('style');
     style.innerHTML = `
@@ -113,5 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
             transform: translateY(0);
         }
     `;
+    // Hide loader when window finishes loading resources
+    const tetrisOverlay = document.getElementById('tetrisOverlay');
+    window.addEventListener('load', () => {
+        if (!tetrisOverlay) return;
+        tetrisOverlay.classList.add('tetris-hidden');
+        // remove from DOM after transition so it doesn't capture events
+        setTimeout(() => {
+            if (tetrisOverlay && tetrisOverlay.parentNode) tetrisOverlay.parentNode.removeChild(tetrisOverlay);
+        }, 400);
+    });
+
     document.head.appendChild(style);
 });

@@ -50,6 +50,10 @@ body {
     overflow-x: hidden;
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
+    font-family: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    /* Ensures fast text rendering fallback */
+    font-feature-settings: "liga" 1;
+
 }
 
 /* Background Container */
@@ -66,30 +70,58 @@ body {
 /* Matrix Animation */
 .jp-matrix {
     background-color: var(--bg-deep);
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-    grid-auto-rows: 40px;
-    min-width: 1920px;
-    /* Ensure coverage */
-    min-height: 1080px;
-    font-size: 32px;
-    color: var(--matrix-color);
-    font-family: "Courier New", Courier, monospace;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-content: center;
+    /* fixed constant cell size to avoid shrinking on resize */
+    --cell-size: 44px;
+    font-size: calc(var(--cell-size) * 0.85);
+    color: var(--matrix-color);
+    font-family: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    pointer-events: none;
     transition: background-color 0.3s, color 0.3s;
-}
+    /* Leave 15% top and bottom empty for a clean background */
+    padding: 15vh 8px;
+    box-sizing: border-box;
+} 
 
 .jp-matrix>span {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    min-width: var(--cell-size);
+    min-height: var(--cell-size);
     text-align: center;
     text-shadow: 0 0 5px var(--accent-purple);
     user-select: none;
-    transition: color 0.5s, text-shadow 0.5s;
+    transition: color 0.5s, text-shadow 0.5s, transform 0.25s;
     line-height: 1;
+    white-space: nowrap;
+    overflow: visible;
+    font-weight: 400;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    font-size: calc(var(--cell-size) * 0.75); /* constant glyph size */
+    -webkit-text-size-adjust: none; /* prevent mobile auto text scaling */
+    -ms-text-size-adjust: none;
 }
+
+
+@media (max-width: 600px) {
+    .jp-matrix {
+        /* keep constant cell size on small screens as well */
+        padding: 10vh 6px; /* slightly smaller vertical padding for mobile */
+    }
+} 
 
 .jp-matrix>span:nth-child(19n + 2) {
     animation: smooth-pulse 3.5s ease-in-out infinite 0.2s;
@@ -1445,4 +1477,136 @@ footer {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+/* Loading screen (Tetris-style) - themed via CSS variables */
+.tetris-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    transition: opacity 300ms ease, visibility 300ms ease;
+}
+
+.tetris-loader-root {
+  /* Reuse the same glass effect as .social-icons-container */
+  background: var(--glass-bg);
+  padding: 1.25rem 1.5rem;
+  min-width: 13rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.6);
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-body, system-ui);
+  color: var(--text-primary);
+}
+
+/* Theme-aware tints: white-ish on dark theme, dark-ish on light theme */
+:root .tetris-loader-root {
+  /* default (assume dark) — make loader slightly lighter */
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .tetris-loader-root {
+  /* In light theme, tint darker so loader stands out */
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.08);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .tetris-loader-root {
+  /* In dark theme, make it subtly white-tinted */
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.06);
+  color: var(--text-primary);
+}
+
+.tetris-loader {
+  display: flex;
+  gap: 0.35rem;
+  align-items: flex-end;
+}
+
+.tetris-block {
+  --tetris-size: 2.2rem;
+
+  width: var(--tetris-size);
+  height: var(--tetris-size);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  color: var(--text-primary);
+
+  background: linear-gradient(135deg, var(--accent-purple, #5b68ff), var(--accent-cyan, #b54dff));
+  border-radius: 0.45rem;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(8, 10, 26, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+  transform-origin: center;
+  animation: tetris-loader-drop 2.4s cubic-bezier(0.25, 0.7, 0.2, 1.05) infinite;
+}
+
+.tetris-block:nth-child(1) { animation-delay: 0s; }
+.tetris-block:nth-child(2) { animation-delay: 0.15s; }
+.tetris-block:nth-child(3) { animation-delay: 0.3s; }
+.tetris-block:nth-child(4) { animation-delay: 0.45s; }
+.tetris-block:nth-child(5) { animation-delay: 0.6s; }
+.tetris-block:nth-child(6) { animation-delay: 0.75s; }
+.tetris-block:nth-child(7) { animation-delay: 0.9s; }
+
+@keyframes tetris-loader-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-7rem) rotate(-90deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-2rem) rotate(-40deg);
+  }
+  55% {
+    transform: translateY(0) rotate(0deg);
+  }
+  65% {
+    /* bounce */
+    transform: translateY(0.35rem) rotate(0deg);
+  }
+  75% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+.tetris-loader-text {
+  margin-top: 0.9rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.tetris-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none;
 }
