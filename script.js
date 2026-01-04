@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let roleIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
-    let typingSpeed = 100;
+    let typeSpeed = 100;
 
     // Theme Toggle Logic
     const themeCheckbox = document.getElementById('theme-checkbox');
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function type() {
+        if (!typingElement) return; // defensive: skip typing if element is absent
         const currentRole = roles[roleIndex];
 
         if (isDeleting) {

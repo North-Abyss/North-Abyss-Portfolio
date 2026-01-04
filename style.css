@@ -194,11 +194,7 @@ body {
         color: var(--text-primary);
         text-shadow: 0 0 10px var(--text-primary);
     }
-}
-
-to {
-    background-position: -10000px 5000px;
-}
+} 
 
 
 
@@ -454,6 +450,22 @@ section {
     transform: scale(1.05);
     /* Added slight scale */
 }
+
+.uiverse-button:focus {
+    outline: 3px solid rgba(255,0,85,0.25);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(255,0,85,0.06);
+}
+
+.social-icon:focus {
+    outline: 3px solid rgba(5,85,255,0.18);
+    outline-offset: 3px;
+}
+
+.read-more:focus {
+    outline: 3px solid rgba(5,85,255,0.18);
+    outline-offset: 3px;
+} 
 
 .uiverse-button span {
     background-color: rgb(5, 6, 45);
@@ -839,7 +851,7 @@ footer {
 
 .switch *,
 .switch *::after,
-*::before {
+.switch *::before {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
@@ -1014,8 +1026,16 @@ footer {
 }
 
 .slider {
-    display: none;
-}
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+} 
 
 .antennas {
     position: absolute;
