@@ -24,6 +24,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 
+    <!-- Minimal inline glass overlay for loader back-layer (LinkedIn-like glass) -->
+    <style>
+      /* Full-screen glass layer behind the loader; theme-aware via html[data-theme] */
+      .loader-back-layer{position:fixed; inset:0; z-index:9998; pointer-events:none; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); background: rgba(0,0,0,0.48); border:none}
+      html[data-theme="light"] .loader-back-layer{background: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.12)}
+      html[data-theme="dark"] .loader-back-layer{background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.04)}
+      /* Keep overlay transparent so loader colors remain unchanged */
+      .tetris-overlay{background:transparent}
+      .loader-back-layer.hidden{opacity:0; visibility:hidden; transition:opacity 300ms ease, visibility 300ms ease}
+    </style>
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://north-abyss.github.io/Portfolio/">
@@ -43,6 +54,7 @@
 
 <body>
     <!-- Loading overlay (Tetris) -->
+    <div class="loader-back-layer" id="loaderBackLayer" aria-hidden="true"></div>
     <div class="tetris-overlay" id="tetrisOverlay" aria-hidden="false">
       <div class="tetris-loader-root" role="status" aria-live="polite">
         <div class="tetris-loader">
