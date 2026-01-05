@@ -153,12 +153,21 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     // Hide loader when window finishes loading resources
     const tetrisOverlay = document.getElementById('tetrisOverlay');
+    const loaderBack = document.getElementById('loaderBackLayer');
     window.addEventListener('load', () => {
-        if (!tetrisOverlay) return;
-        tetrisOverlay.classList.add('tetris-hidden');
-        // remove from DOM after transition so it doesn't capture events
+        if (tetrisOverlay) {
+            tetrisOverlay.classList.add('tetris-hidden');
+        }
+
+        // hide and remove the back layer as well
+        if (loaderBack) {
+            loaderBack.classList.add('hidden');
+        }
+
+        // remove from DOM after transition so these elements don't capture events
         setTimeout(() => {
             if (tetrisOverlay && tetrisOverlay.parentNode) tetrisOverlay.parentNode.removeChild(tetrisOverlay);
+            if (loaderBack && loaderBack.parentNode) loaderBack.parentNode.removeChild(loaderBack);
         }, 400);
     });
 
