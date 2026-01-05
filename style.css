@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
 
 :root {
     --bg-color: #0f0c29;
@@ -120,6 +120,14 @@ body {
     .jp-matrix {
         /* keep constant cell size on small screens as well */
         padding: 10vh 6px; /* slightly smaller vertical padding for mobile */
+    }
+} 
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .float-animation, .float-delayed, .glitch::before, .glitch::after, .tetris-loader, .tetris-block, .jp-matrix>span {
+        animation: none !important;
+        transition: none !important;
     }
 } 
 

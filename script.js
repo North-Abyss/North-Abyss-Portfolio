@@ -127,14 +127,28 @@ document.addEventListener('DOMContentLoaded', () => {
             resizeTimer = setTimeout(generateMatrix, 120);
         }
 
-        if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(generateMatrix).catch(generateMatrix);
-        } else {
-            generateMatrix();
+        function scheduleMatrixGeneration() {
+            const run = () => {
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(generateMatrix).catch(generateMatrix);
+                } else {
+                    generateMatrix();
+                }
+
+                // Attach listeners after first generation to avoid overhead during initial load
+                window.addEventListener('resize', debouncedGenerate);
+                window.addEventListener('orientationchange', debouncedGenerate);
+            };
+
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(run, { timeout: 1500 });
+            } else {
+                window.addEventListener('load', run);
+            }
         }
 
-        window.addEventListener('resize', debouncedGenerate);
-        window.addEventListener('orientationchange', debouncedGenerate);
+        // Defer generation to idle time to reduce initial load/TTI impact
+        scheduleMatrixGeneration();
 
     })();
 
